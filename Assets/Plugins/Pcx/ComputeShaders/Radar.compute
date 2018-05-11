@@ -1,0 +1,61 @@
+﻿#pragma kernel Main
+
+#include "HLSLSupport.cginc"
+#include "../Pcx/Shaders/Common.cginc"
+
+StructuredBuffer<float4> SourceBuffer;
+RWStructuredBuffer<float4> OutputBuffer;
+
+CBUFFER_START(Params)
+    float Time;
+	int Param1;
+	float Radius; // Radius
+	float FlikeringSpeed; // Flikering speed
+	bool Flikering;
+CBUFFER_END
+
+[numthreads(128, 1, 1)]
+void Main(uint id : SV_DispatchThreadID)
+{
+	// Original Points 
+    float4 pt = SourceBuffer[id];
+	float4 pt1 = pt;
+
+	// And Color
+    half3 c = PcxDecodeColor(asuint(pt.w));
+
+	// Animation One
+	if (Param1 == 0) {
+		// Calculate spot of "radar"
+		float2 radar = float2(sin(Time), cos(Time * -1)) * Radius;
+
+		// Get distance vector of original point to spot of radar
+		float2 dist = pt.xy - radar;
+
+		// get the length of that distance vector (a.k.a. the distance to that point)
+		float l = length(dist);
+
+		// Use the distance to modify the original color (in this case subtract the distance from the color)
+		c *= 1 - clamp(l, 0.0, 1.0);
+
+		// Modify color with pseudo random noise //
+		if (Flikering) {
+			c *= frac(sin(Time * 5.0) * FlikeringSpeed);
+		}
+		
+	
+	} else {
+	// Animation 2
+
+	
+	}
+
+	//c = lerp(c1, c2, clamp(Param1, 0, 1));
+	//c = lerp(c, c3, clamp(Param1 - 1, 0,1));
+
+	// Reencode the color for output
+    pt.w = asfloat(PcxEncodeColor(c));
+
+	// Output new data
+    OutputBuffer[id] = pt;
+}
