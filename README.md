@@ -10,6 +10,8 @@ The idea behind this project is to capture the movement of a dancer in time and 
 ![Img](/ReadmeData/Images/CloudShadows_img_3.png)
 ![Img](/ReadmeData/Images/CloudShadows_img_4.png)
 
+We started this project on Unity with [Keijiro's Pcx](https://github.com/keijiro/Pcx) library. Pcx is a custom importer and renderer that allows handling point cloud data in Unity.
+
 # Credits
 Cloud Shadow<br>
 A project by Erika Marthins and Stella Speziali<br>
